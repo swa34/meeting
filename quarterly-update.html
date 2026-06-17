@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apps &amp; Data — Quarterly Team Update</title>
+
+<!-- Same brand fonts the @caes-webteam/ui theme.css loads -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ───────────────────────────────────────────────────────────────
+     Brand tokens — mirrored from @caes-webteam/ui (src/theme.css).
+     This static page can't consume the React/Tailwind package, so we
+     reproduce its UGA CAES design system in plain CSS.
+     ─────────────────────────────────────────────────────────────── */
+  :root{
+    /* Primary */
+    --bulldog-red:#ba0c2f;
+    --bulldog-red-dark:#8a0922;
+    --arch-black:#000000;
+    --white:#ffffff;
+    /* Accent */
+    --lake-herrick-text:#007077;   /* AA teal on white */
+    --olympic:#004e60;
+    --odyssey:#c8d8eb;
+    /* Neutral */
+    --sanford:#554f47;
+    --stegeman:#9ea2a2;
+    --creamery:#d6d2c4;
+    --parchment:#f6f3ec;
+    --parchment-light:#fbf9f4;
+    /* Utility */
+    --medium-gray:#e0e0e0;         /* decorative borders only */
+    --border:#767676;              /* interactive-control border (3:1) */
+    --text-primary:#1a1a1a;
+    --text-secondary:#4a4a4a;
+    /* Fonts */
+    --font-heading:"Merriweather",Georgia,serif;
+    --font-body:"Open Sans","Helvetica Neue",sans-serif;
+    /* Shape */
+    --radius-base:0.5rem;
+    --radius-card:0.75rem;
+    --radius-button:0.375rem;
+    /* Status chips (brand-derived, all AA) */
+    --done:#007077;   --done-bg:#e3f1f2;
+    --prog:#8a5a00;   --prog-bg:#fbf2dc;
+    --up:#004e60;     --up-bg:#dde9ef;
+    --support:#ba0c2f;--support-bg:#fbe9ec;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--text-primary);
+    background:var(--parchment);
+    line-height:1.6;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;flex-direction:column;min-height:100vh;
+  }
+  h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);font-weight:700;}
+  a{color:var(--bulldog-red-dark);}
+
+  /* App-wide keyboard focus ring (WCAG 2.4.7) — matches theme.css */
+  :focus-visible{outline:2px solid var(--bulldog-red);outline-offset:2px;}
+
+  /* Skip-to-content link (pairs with <AppShell/> in the package) */
+  .skip-to-content{position:absolute;left:-9999px;z-index:100;}
+  .skip-to-content:focus{
+    position:fixed;top:0;left:0;padding:.75rem 1.5rem;
+    background:var(--arch-black);color:var(--white);
+    font-family:var(--font-heading);font-size:.875rem;font-weight:600;
+    text-transform:uppercase;letter-spacing:.05em;
+    outline:3px solid var(--bulldog-red);
+  }
+
+  .shell{max-width:80rem;margin:0 auto;padding-left:1.5rem;padding-right:1.5rem;width:100%;}
+  [data-mark]{display:inline-flex;line-height:0;}
+  [data-mark] > svg{display:block;height:100%;width:auto;}
+
+  /* ── App header (UGA bar + brand row + nav) — mimics <AppHeader/> ── */
+  header.app{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);}
+
+  .uga-bar{background:var(--arch-black);color:var(--white);border-bottom:2px solid var(--bulldog-red);}
+  .uga-bar .shell{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding-top:.375rem;padding-bottom:.375rem;}
+  .uga-bar a{color:var(--white);text-decoration:none;border-radius:4px;}
+  .uga-wordmark{color:var(--white);}
+  .uga-wordmark svg{height:13px;}
+  .uga-unit{font-size:.75rem;color:rgba(255,255,255,.7);transition:color .15s;}
+  .uga-unit:hover{color:var(--white);text-decoration:underline;}
+  @media (max-width:639px){.uga-unit{display:none;}}
+
+  .brand-row{background:var(--arch-black);color:var(--white);}
+  .brand-row .shell{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding-top:.75rem;padding-bottom:.75rem;}
+  .brand-left{display:flex;align-items:center;gap:1rem;min-width:0;}
+  .brand-sig{height:40px;}
+  .brand-divider{height:1.5rem;width:1px;flex-shrink:0;background:rgba(255,255,255,.3);}
+  .brand-title{color:var(--white);text-decoration:none;}
+  .brand-title span{
+    display:block;font-family:var(--font-heading);font-size:1.0625rem;font-weight:700;
+    letter-spacing:.03em;line-height:1.15;
+  }
+  .brand-actions{display:flex;align-items:center;gap:.5rem;flex-shrink:0;flex-wrap:wrap;}
+  .meta-badge{
+    font-family:var(--font-body);font-size:.75rem;color:rgba(255,255,255,.85);
+    border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.25rem .7rem;white-space:nowrap;
+  }
+  .meta-badge b{color:var(--white);font-weight:600;}
+
+  nav.app-nav{background:var(--arch-black);border-top:1px solid rgba(255,255,255,.15);}
+  nav.app-nav .shell{padding-top:.5rem;padding-bottom:.5rem;}
+  nav.app-nav ul{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;list-style:none;margin:0;padding:0;}
+  nav.app-nav a{
+    display:inline-flex;align-items:center;text-decoration:none;
+    padding:.5rem .75rem;border-radius:var(--radius-button);
+    font-family:var(--font-heading);font-size:.75rem;text-transform:uppercase;
+    letter-spacing:.06em;white-space:nowrap;transition:background .15s,color .15s;
+    color:rgba(255,255,255,.7);
+  }
+  nav.app-nav a:hover{background:rgba(255,255,255,.1);color:var(--white);}
+  nav.app-nav a[aria-current="page"]{
+    color:var(--white);box-shadow:inset 0 -2px 0 0 var(--white);
+  }
+
+  /* ── Page intro ── */
+  main{flex:1;padding-bottom:4rem;}
+  .intro{padding:2.5rem 0 .5rem;}
+  .eyebrow{
+    text-transform:uppercase;letter-spacing:.16em;font-size:.75rem;font-weight:700;
+    color:var(--bulldog-red);margin:0 0 .5rem;font-family:var(--font-body);
+  }
+  h1.page{font-size:2rem;line-height:1.15;margin:0;letter-spacing:-.01em;}
+  .intro .when{margin-top:.75rem;font-size:.9rem;color:var(--sanford);}
+  .intro .when b{color:var(--text-primary);}
+
+  h2.block{
+    font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;
+    color:var(--sanford);font-weight:700;margin:2.25rem 0 .75rem;font-family:var(--font-body);
+  }
+
+  /* ── Cards / table ── */
+  .card{background:var(--white);border:1px solid var(--medium-gray);border-radius:var(--radius-card);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;font-size:.875rem;}
+  th,td{padding:.85rem 1rem;text-align:left;border-bottom:1px solid var(--medium-gray);}
+  thead th{
+    background:var(--parchment-light);font-size:.7rem;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--sanford);font-weight:700;font-family:var(--font-body);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  td.name{font-weight:700;white-space:nowrap;font-family:var(--font-heading);}
+  td.role{color:var(--sanford);font-size:.8rem;}
+  td.num{text-align:center;font-variant-numeric:tabular-nums;font-weight:600;}
+  td.num.zero{color:var(--stegeman);font-weight:500;}
+  .footnote{font-size:.8rem;color:var(--sanford);margin:.65rem .15rem 0;}
+
+  /* ── Person cards ── */
+  .person{background:var(--white);border:1px solid var(--medium-gray);border-radius:var(--radius-card);margin-top:1.6rem;overflow:hidden;scroll-margin-top:1rem;}
+  .person-head{
+    padding:1.25rem 1.5rem;border-bottom:1px solid var(--medium-gray);
+    display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+    background:linear-gradient(to right,var(--parchment-light),var(--white));
+  }
+  .person-head h3{margin:0;font-size:1.35rem;letter-spacing:-.01em;}
+  .person-head .role{
+    font-size:.8rem;color:var(--bulldog-red);font-weight:700;font-family:var(--font-body);
+    text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;
+  }
+  .person-body{padding:.5rem 1.5rem 1.5rem;}
+
+  .grouptitle{display:flex;align-items:center;gap:.65rem;margin:1.4rem 0 .75rem;}
+  .grouptitle .label{
+    font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+    padding:.2rem .65rem;border-radius:999px;font-family:var(--font-body);
+  }
+  .label.done{color:var(--done);background:var(--done-bg);}
+  .label.prog{color:var(--prog);background:var(--prog-bg);}
+  .label.up{color:var(--up);background:var(--up-bg);}
+  .label.support{color:var(--support);background:var(--support-bg);}
+  .grouptitle .rule{flex:1;height:1px;background:var(--medium-gray);}
+
+  .item{margin:0 0 .9rem;}
+  .item h4{margin:0 0 .2rem;font-size:1rem;}
+  .item p{margin:0;font-size:.9rem;color:var(--text-secondary);}
+  .item .sub{font-weight:400;color:var(--sanford);font-family:var(--font-body);}
+
+  ul.tight{margin:.25rem 0 0;padding-left:1.25rem;}
+  ul.tight li{font-size:.9rem;margin:.35rem 0;color:var(--text-secondary);}
+  ul.tight li b{color:var(--text-primary);}
+  ul.tight .muted{color:var(--sanford);}
+  code{font-family:"Fira Code",ui-monospace,monospace;font-size:.85em;background:var(--parchment);padding:.05rem .35rem;border-radius:4px;}
+
+  .support-stat{display:flex;gap:.65rem;flex-wrap:wrap;margin:.15rem 0 .75rem;}
+  .pill{font-size:.85rem;font-weight:600;padding:.4rem .85rem;border-radius:var(--radius-base);background:var(--parchment);}
+  .pill .n{color:var(--bulldog-red);font-weight:700;}
+  .pill.na{color:var(--sanford);font-weight:500;}
+  .support-note{font-size:.9rem;color:var(--text-secondary);margin:0 0 .4rem;}
+
+  /* ── Footer — mimics <Footer/> (dark, white text, AA on black) ── */
+  footer.app{margin-top:auto;background:var(--arch-black);color:var(--white);}
+  footer.app .shell{padding-top:2rem;padding-bottom:2rem;}
+  .foot-grid{display:grid;gap:2rem;}
+  @media (min-width:640px){.foot-grid{grid-template-columns:repeat(3,1fr);gap:3rem;}}
+  .foot-sig{height:52px;}
+  footer.app h4{
+    margin:0;font-family:var(--font-heading);font-size:.875rem;font-weight:600;
+    text-transform:uppercase;letter-spacing:.08em;color:var(--white);
+  }
+  footer.app p{margin:.5rem 0 0;font-size:.875rem;color:rgba(255,255,255,.7);}
+  footer.app a{color:var(--white);text-decoration:underline;text-underline-offset:2px;}
+  footer.app a:hover{color:rgba(255,255,255,.8);}
+  footer.app ul{list-style:none;margin:.5rem 0 0;padding:0;display:flex;flex-direction:column;gap:.4rem;}
+  footer.app ul a{font-size:.875rem;}
+  .foot-legal{
+    margin-top:2rem;border-top:1px solid rgba(255,255,255,.15);padding-top:1rem;
+    display:flex;flex-direction:column;gap:.25rem;font-size:.75rem;color:rgba(255,255,255,.7);
+  }
+  @media (min-width:640px){.foot-legal{flex-direction:row;align-items:center;justify-content:space-between;}}
+  .foot-legal p{margin:0;color:rgba(255,255,255,.7);}
+
+  @media (max-width:560px){
+    h1.page{font-size:1.6rem;}
+    .person-head{flex-direction:column;gap:.25rem;}
+    th.hide-sm,td.hide-sm{display:none;}
+    .person-body{padding:.5rem 1rem 1.25rem;}
+    .brand-title span{font-size:.95rem;}
+  }
+  @media print{
+    body{background:#fff;font-size:12px;}
+    .uga-bar,nav.app-nav,footer.app,.skip-to-content{display:none;}
+    header.app{box-shadow:none;}
+    .person,.card{break-inside:avoid;border-color:#ccc;}
+    main{padding-bottom:0;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-to-content" href="#main">Skip to content</a>
+
+<!-- ══ App header (UGA bar + brand row + nav) ══ -->
+<header class="app">
+
+  <!-- UGA institutional bar -->
+  <div class="uga-bar">
+    <div class="shell">
+      <a href="https://www.uga.edu" aria-label="University of Georgia home page">
+        <span class="uga-wordmark" data-mark role="img" aria-label="University of Georgia">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 32.68"><defs><style>.a{fill:currentColor;}</style></defs><path class="a" d="M462.26,0h0c-11.18,0-17,8.21-17,16.33a16,16,0,0,0,16.44,16.33c9.68,0,16.71-7,16.71-16.72A15.66,15.66,0,0,0,462.26,0Zm8.5,17.26c0,7.76-3.23,12.32-8.22,12.32-5.65,0-9.74-5.66-9.74-14.09,0-7.6,3.5-12.45,8.53-12.45h0C467.07,3,470.76,8.35,470.76,17.26Z"/><path class="a" d="M318.1,0h0c-11.18,0-17,8.21-17,16.33a16,16,0,0,0,16.44,16.33c9.68,0,16.71-7,16.71-16.72A15.66,15.66,0,0,0,318.1,0Zm8.5,17.26C326.6,25,323.37,30,318.38,30c-5.65,0-9.75-6.12-9.75-14.55,0-7.6,3.51-12.9,8.53-12.9h0C322.91,2.59,326.6,8.35,326.6,17.26Z"/><path class="a" d="M409.38,19V30.9l-1.19.28a43.74,43.74,0,0,1-9.58,1.48c-11.2,0-18.43-6.3-18.43-16C380.18,5.2,389.72,0,398.59,0a45.18,45.18,0,0,1,9.79,1.65V9.1s-2.78-6-9.58-6a10.65,10.65,0,0,0-10.25,7.55,17.54,17.54,0,0,0-.81,5.21c0,9.87,5.69,13.84,11.33,13.84a5.64,5.64,0,0,0,2.63-.54,2.68,2.68,0,0,0,1-2.44V20.09c0-4.06-2.83-5.26-2.83-5.26h11.57S409.38,15.36,409.38,19Z"/><path class="a" d="M541.35,19V30.9l-1.19.28a43.74,43.74,0,0,1-9.58,1.48c-11.2,0-18.43-6.3-18.43-16C512.15,5.2,521.69,0,530.56,0a45.18,45.18,0,0,1,9.79,1.65V9.1s-2.78-6-9.58-6a10.65,10.65,0,0,0-10.25,7.55,17.54,17.54,0,0,0-.81,5.21c0,9.87,5.69,13.84,11.33,13.84a5.64,5.64,0,0,0,2.63-.54,2.68,2.68,0,0,0,1-2.44V20.09c0-4.06-2.83-5.26-2.83-5.26H543.4S541.35,15.36,541.35,19Z"/><path class="a" d="M107.83.71c1.8.78,1.39,3.23.65,5.16-.37,1.07-4.57,11.5-6.51,16.32-.72-2.08-5.45-15.85-5.7-16.59a4.42,4.42,0,0,1,1-4.89H85.13C87.71,2.37,88.41,4,89.89,8c2.51,6.7,6,16.23,8.69,23.79l.06.18h3.2L111.42,7.8c1-2.69,2.93-5.94,5.09-7.09Z"/><path class="a" d="M139.65,27.1c-1.54,1.79-5.58,1.68-6.16,1.68a9.55,9.55,0,0,1-3.82-.43c-.81-.36-1-1.46-1-3.64V17.9h3.71c3.34,0,5.63.2,6.3,1.88V12.5c-.63,1.67-2.82,2-6.3,2h-3.71v-10a.62.62,0,0,1,.61-.63h5.52c2.74,0,4.08.47,5.2,1.9a14.12,14.12,0,0,1,1.84,3.57V.71H119.4c.71.49,2.56,2.23,2.56,7.06V24.69c0,6-2.82,7.23-2.82,7.23h23.3v-9.2A24.36,24.36,0,0,1,139.65,27.1Z"/><path class="a" d="M430.49,28.78a9.55,9.55,0,0,1-3.82-.43c-.81-.35-1-1.46-1-3.64V17.9h3.71c3.34,0,5.63.2,6.3,1.88V12.5c-.63,1.67-2.82,2-6.3,2h-3.71V5.18c0-1.36,0-1.36,1.66-1.36h4.47c2.74,0,4.08.47,5.2,1.9a14.12,14.12,0,0,1,1.84,3.57V.71h-22.7c.71.49,2.56,2.23,2.56,7.06V24.69c0,6-2.82,7.23-2.82,7.23h23.52v-9.2a24.36,24.36,0,0,1-2.78,4.38C435.12,28.89,431.07,28.78,430.49,28.78Z"/><path class="a" d="M559.81,31.92S557,30.67,557,24.69V7.77c0-4.83,1.85-6.57,2.56-7.06H547.8c.71.49,2.56,2.23,2.56,7.06V24.69c0,6-2.82,7.23-2.82,7.23Z"/><path class="a" d="M65,31.92s-2.82-1.25-2.82-7.23V7.77C62.19,2.94,64,1.2,64.74.71H56.32c.71.49,2.55,2.23,2.55,7.06V20.45L42.12.71H34.76c.71.49,2.55,2.23,2.55,7.06V24.69c0,6-2.82,7.23-2.82,7.23h9s-2.82-1.25-2.82-7.23V9.83L58.52,31.92Z"/><path class="a" d="M219.36,31.92s-2.82-1.25-2.82-7.23V7.77c0-4.83,1.84-6.57,2.55-7.06h-11.6c.71.49,2.55,2.23,2.55,7.06V24.69c0,6-2.81,7.23-2.81,7.23Z"/><path class="a" d="M81.71,31.92s-2.81-1.25-2.81-7.23V7.77c0-4.83,1.84-6.57,2.55-7.06H69.8c.7.49,2.55,2.23,2.55,7.06V24.69c0,6-2.82,7.23-2.82,7.23Z"/><path class="a" d="M594.57,31.92c-2.58-1.66-3.28-3.24-4.76-7.25-2.51-6.69-6-16.22-8.69-23.78l-.06-.18h-3.64l-9.58,24.12c-1.05,2.69-2.93,5.94-5.09,7.09h8.86c-1.8-.78-1.39-3.23-.65-5.17.13-.37.63-1.67,1.31-3.38h9.88L583.43,27a4.4,4.4,0,0,1-.95,4.89Zm-20.9-12.08c1.82-4.57,3.88-9.67,3.88-9.67l3.37,9.67Z"/><path class="a" d="M193.35,12.69c-4.29-2.09-5.78-3.32-5.87-5.94-.07-2.14,1.33-4.19,4.41-4.19,4.52,0,6.88,2.59,8.23,5.45V1.33A30.69,30.69,0,0,0,192.38.06c-6.56,0-11,4-11,9.31s4,7.52,9,10c3.59,1.82,5.58,3,5.58,5.85,0,2.62-1.44,4.64-4.47,4.64-5,0-8.53-4.74-9.67-7.78L182,30a24.08,24.08,0,0,0,4.28,1.84,17.31,17.31,0,0,0,4.6.72c6.58,0,11.61-3.34,11.61-9.71C202.53,18.14,198.41,15.1,193.35,12.69Z"/><path class="a" d="M350.91,31.92s-2.82-1.25-2.82-7.23V18h3.7c3.34,0,5.63.19,6.31,1.88V12.5c-.64,1.67-2.83,2-6.31,2h-3.7V5.09c0-1.36,0-1.36,1.66-1.36h4.46c2.74,0,4.08.47,5.2,1.9a14,14,0,0,1,1.84,3.57V.71H338.69c.71.49,2.55,2.23,2.55,7.06V24.69c0,6-2.82,7.23-2.82,7.23Z"/><path class="a" d="M240.63,5.18c0-1.36,0-1.36,1.66-1.36h1.41c2.74,0,4.08.47,5.2,1.9a14.12,14.12,0,0,1,1.84,3.57V.71h-27V9.29a14.12,14.12,0,0,1,1.84-3.57c1.12-1.43,2.46-1.9,5.2-1.9h1.41c1.66,0,1.66,0,1.66,1.36V24.69c0,6-2.82,7.23-2.82,7.23h12.4s-2.82-1.25-2.82-7.23Z"/><path class="a" d="M24,18V7.77C24,2.94,22.18,1.2,21.47.71h8.7c-.7.49-2.55,2.23-2.55,7.06v10S29,32.43,16,32.67c0,0-13.44.76-13.44-11V7.77C2.55,2.94.71,1.2,0,.71H11.64c-.7.49-2.55,2.23-2.55,7.06V19.61c0,10,7.27,9.7,7.27,9.7S24,30.78,24,18Z"/><path class="a" d="M272.67.78s3.53,1.94,2.23,4.8l-4.45,9.09-4.7-8.83A3.85,3.85,0,0,1,267.14.78h-12.9a14.33,14.33,0,0,1,4.89,5.27L265.82,18v6.73c0,6-2.82,7.23-2.82,7.23h12.23s-2.82-1.25-2.82-7.23v-7.1L278,6.68a13.35,13.35,0,0,1,5.75-5.9Z"/><path class="a" d="M166,9.72a6.74,6.74,0,0,1-2.15,5.43h0c-.88.8-2.36,1.19-4.52,1.19h-.88V5.11c0-.89.08-1.32.3-1.52a3.26,3.26,0,0,1,2-.45C163.31,3.14,166,4.87,166,9.72Zm6,15.18c-1.33-2.26-3.35-5.64-4.35-7.56,2.14-.92,5.41-3.08,5.41-7.6h0c0-.22,0-.45,0-.68a7.74,7.74,0,0,0-3.21-6.52C168,1.2,165.62.71,161.25.71H149.36c.71.49,2.56,2.23,2.56,7.06V24.69c0,6-2.82,7.23-2.82,7.23h12.2s-2.82-1.25-2.82-7.23V18.77h.92a3,3,0,0,1,2.91,1.82c.47.85.91,1.7,1.34,2.53.86,1.63,2,3.79,2.76,5.06,1.89,3,3.42,4.3,9.22,4.11,0,0,1,0,1.75-.1C177.37,32.19,175.38,30.69,172,24.9Z"/><path class="a" d="M498.5,9.72a6.74,6.74,0,0,1-2.15,5.43h0c-.88.8-2.36,1.19-4.52,1.19h-.89V5.11c0-.89.09-1.32.31-1.52a3.24,3.24,0,0,1,2-.45C495.79,3.14,498.5,4.87,498.5,9.72Zm6,15.18c-1.33-2.26-3.35-5.64-4.35-7.56,2.14-.92,5.41-3.08,5.41-7.6h0c0-.22,0-.45,0-.68a7.73,7.73,0,0,0-3.2-6.52C500.44,1.2,498.1.71,493.73.71H481.84c.71.49,2.56,2.23,2.56,7.06V24.69c0,6-2.82,7.23-2.82,7.23h12.2s-2.83-1.25-2.83-7.23V18.77h.93a3,3,0,0,1,2.91,1.82c.46.85.91,1.7,1.34,2.53.85,1.63,1.95,3.79,2.75,5.06,1.9,3,3.43,4.3,9.23,4.11,0,0,1,0,1.74-.1C509.84,32.19,507.85,30.69,504.46,24.9Z"/><path class="a" d="M600,29.14a2.72,2.72,0,1,1-2.71-2.74A2.71,2.71,0,0,1,600,29.14Zm-4.76,0a2.09,2.09,0,0,0,2.07,2.19,2.19,2.19,0,0,0,0-4.37A2.09,2.09,0,0,0,595.24,29.14Zm1.63,1.44h-.61V27.84a5.23,5.23,0,0,1,1-.08,1.56,1.56,0,0,1,.91.2.74.74,0,0,1,.26.6.68.68,0,0,1-.55.63v0a.8.8,0,0,1,.49.67,2.33,2.33,0,0,0,.19.68h-.66a2.39,2.39,0,0,1-.21-.67c-.05-.3-.21-.43-.55-.43h-.29Zm0-1.55h.29c.34,0,.61-.12.61-.4s-.18-.42-.56-.42a2,2,0,0,0-.34,0Z"/></svg>
+        </span>
+      </a>
+      <a class="uga-unit" href="https://www.caes.uga.edu/" target="_blank" rel="noopener">College of Agricultural &amp; Environmental Sciences</a>
+    </div>
+  </div>
+
+  <!-- Brand row: logo | divider | module title | actions -->
+  <div class="brand-row">
+    <div class="shell">
+      <div class="brand-left">
+        <a href="https://caes.uga.edu/" target="_blank" rel="noopener" aria-label="UGA College of Agricultural &amp; Environmental Sciences">
+          <img class="brand-sig" src="assets/caes-horizontal-cw.svg" alt="University of Georgia College of Agricultural &amp; Environmental Sciences">
+        </a>
+        <div class="brand-divider" aria-hidden="true"></div>
+        <a class="brand-title" href="#main"><span>Apps &amp; Data</span></a>
+      </div>
+      <div class="brand-actions">
+        <span class="meta-badge"><b>Meeting:</b> June 17, 2026</span>
+        <span class="meta-badge"><b>Period:</b> Mar – Jun 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary nav -->
+  <nav class="app-nav" aria-label="On this page">
+    <div class="shell">
+      <ul>
+        <li><a href="#main" aria-current="page">At a glance</a></li>
+        <li><a href="#matthew">Matthew Narron</a></li>
+        <li><a href="#jesse">Jesse Kuzy</a></li>
+        <li><a href="#scott">Scott Allen</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="shell">
+
+    <section class="intro">
+      <p class="eyebrow">Quarterly Team Update</p>
+      <h1 class="page">Apps &amp; Data — Where things stand</h1>
+      <p class="when"><b>Meeting:</b> June 17, 2026 &nbsp;·&nbsp; <b>Period:</b> March – June 2026</p>
+    </section>
+
+    <section>
+      <h2 class="block">At a glance</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Team member</th>
+              <th class="hide-sm">Role</th>
+              <th class="num">Completed<br>workstreams</th>
+              <th class="num">In<br>progress</th>
+              <th class="num">Support<br>done</th>
+              <th class="num">Support<br>open</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name">Matthew Narron</td>
+              <td class="role hide-sm">Data Analyst</td>
+              <td class="num">4</td>
+              <td class="num">~12</td>
+              <td class="num zero">—</td>
+              <td class="num zero">—</td>
+            </tr>
+            <tr>
+              <td class="name">Jesse Kuzy</td>
+              <td class="role hide-sm">Application Developer</td>
+              <td class="num">5</td>
+              <td class="num">3</td>
+              <td class="num">49</td>
+              <td class="num">few</td>
+            </tr>
+            <tr>
+              <td class="name">Scott Allen</td>
+              <td class="role hide-sm">App Developer Team Lead</td>
+              <td class="num">5</td>
+              <td class="num">~10</td>
+              <td class="num">10</td>
+              <td class="num zero">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">Timely support is the bulk of Jesse's load; Matthew's analytics work is tracked as projects rather than support tickets. A couple of Jesse's 49 are duplicate records of the same issue.</p>
+    </section>
+
+    <!-- MATTHEW -->
+    <article class="person" id="matthew">
+      <div class="person-head">
+        <h3>Matthew Narron</h3>
+        <span class="role">Data Analyst</span>
+      </div>
+      <div class="person-body">
+
+        <div class="grouptitle"><span class="label done">Completed</span><span class="rule"></span></div>
+
+        <div class="item">
+          <h4>OMC Awards &amp; Publications Dashboard</h4>
+          <p>Evaluated the existing Tableau dashboard, built the data connections, ingested CAES DB and combined Elements/CAESPD data, and delivered the V1 report to OMC for review.</p>
+        </div>
+        <div class="item">
+          <h4>Employee Birthday Dashboard</h4>
+          <p>Gathered requirements, built the Power Automate list for manager emails, and wrote the how-to document.</p>
+        </div>
+        <div class="item">
+          <h4>Grants Dashboard</h4>
+          <p>Delivered December updates and met with Andrew to resolve a connection error.</p>
+        </div>
+        <div class="item">
+          <h4>OIT Metrics Dashboard</h4>
+          <p>Kicked off the initiative with Web Team and Help Desk planning meetings.</p>
+        </div>
+
+        <div class="grouptitle"><span class="label prog">In progress</span><span class="rule"></span></div>
+        <ul class="tight">
+          <li>OMC Awards &amp; Publications — V2 report (due ~6/26)</li>
+          <li>OIT Metrics / Leadership Dashboard — site discovery meetings (Field Services, Griffin, Tifton, Power BI connections); final deadline ~7/1</li>
+          <li>CAES &amp; FACS Elements Dashboard — Tableau eval, data connections, report work</li>
+          <li>Power BI builds &amp; migrations — New Hires/Transfers, Grants, Parity (Tableau→Power BI), Terminations &amp; Transfers, CAES Dean Financials, semantic-model research</li>
+          <li>CAES Affiliates data-warehouse exploration, Radon map (ArcGIS) update, migrating Power BI connections off Julia's account to OIT, Academic Analytics replacement, FarmGate mobile-layout research, Data Analyst onboarding</li>
+        </ul>
+
+        <div class="grouptitle"><span class="label support">Timely support</span><span class="rule"></span></div>
+        <div class="support-stat">
+          <span class="pill na">Not applicable</span>
+        </div>
+        <p class="support-note">Matthew's work is dashboards and analytics, tracked as projects rather than timely-support tickets.</p>
+
+      </div>
+    </article>
+
+    <!-- JESSE -->
+    <article class="person" id="jesse">
+      <div class="person-head">
+        <h3>Jesse Kuzy</h3>
+        <span class="role">Application Developer</span>
+      </div>
+      <div class="person-body">
+
+        <div class="grouptitle"><span class="label done">Completed</span><span class="rule"></span></div>
+
+        <div class="item">
+          <h4>RHEL 10 on-prem web server — infrastructure lead <span class="sub">(ongoing dev &amp; testing)</span></h4>
+          <p>Spearheading the new RHEL 10 on-prem web server that will host our intranet apps as we migrate off ColdFusion. Stood up the foundation — installed the required libraries, configured the shared PostgreSQL database, established the file structure, and set up Podman for containerized app hosting. Development and testing continue as apps move over.</p>
+        </div>
+        <div class="item">
+          <h4>Extension Expert Bot <span class="sub">(RAG ingestion)</span></h4>
+          <p>Engineered the data ingestion, chunking, and upsert pipeline — Firecrawl crawls into Pinecone namespaces (Field Report, caes.uga.edu, extension, intranet) — expanded the crawl source list, optimized the scripts, and ran the new ingestion through the testing harness.</p>
+        </div>
+        <div class="item">
+          <h4>Publications import</h4>
+          <p>Built the phased Pubs import script (phase 1 API connection → phase 2/2.5 compare + dry-run → phase 3 write to WordPress), completed the Field Report data migration, and replaced JSON file reads with live API calls.</p>
+        </div>
+        <div class="item">
+          <h4>ETS → PEP Migration</h4>
+          <p>Reviewed the requirements doc and sent feedback, and produced the ETS category/user/session datasets PEP needs for the migration.</p>
+        </div>
+        <div class="item">
+          <h4>Maintenance &amp; security</h4>
+          <p>Picked a small CF app to convert for the new dev stack, remediated Oracle Java SE vulnerabilities, researched business.caes.uga.edu redirects, and completed the React class.</p>
+        </div>
+
+        <div class="grouptitle"><span class="label prog">In progress</span><span class="rule"></span></div>
+        <ul class="tight">
+          <li>Add Cloud Sites / Sevalla to OIT Tools</li>
+          <li>Investigate mangled publication slugs in URLs</li>
+          <li>business.caes.uga.edu redirects (AEM .any file config)</li>
+        </ul>
+
+        <div class="grouptitle"><span class="label up">Upcoming</span><span class="rule"></span></div>
+        <ul class="tight">
+          <li><b>Personnel DB rebuild</b> <span class="muted">(Jesse leading)</span> — refactor and rebuild the Personnel Database to modernize it</li>
+          <li><b>Graduate announcement system</b> <span class="muted">(with Scott)</span> — supporting the new graduate announcement system</li>
+          <li><b>Expand @caes-webteam/ui</b> <span class="muted">(with Scott)</span> — build out the component set (tables, form controls, and more) for universal use across CAES apps, and add a distribution path so the library can be used on static pages too, not just React apps</li>
+        </ul>
+
+        <div class="grouptitle"><span class="label support">Timely support</span><span class="rule"></span></div>
+        <div class="support-stat">
+          <span class="pill"><span class="n">49</span> completed</span>
+          <span class="pill"><span class="n">few</span> open</span>
+        </div>
+        <p class="support-note">The bulk of Jesse's quarter. What came in:</p>
+        <ul class="tight">
+          <li><b>ETS access &amp; Personnel DB</b> — access grants, impersonator setup, data-custodian updates, account reactivations, registration windows</li>
+          <li><b>GA Counts</b> — error triage (several false flags), two real Vue crash fixes (2,712 historical occurrences cleared), USDA NIFA race/ethnicity category updates</li>
+          <li><b>Extension Calendar / Destiny One</b> — date/flyer fixes, approver setup, installment-payment coordination, attribution cleanup</li>
+          <li><b>AEM sites</b> — image-component duplication bug, redirects, navigation fixes</li>
+          <li><b>REST API</b> — added <code>getEmployeeGroup</code> and <code>showSiteURLs</code> parameters for OIT</li>
+          <li><b>Other</b> — ESTUDY date-range validation, OITTools reference page, file-share folders, error-log investigations</li>
+        </ul>
+
+      </div>
+    </article>
+
+    <!-- SCOTT -->
+    <article class="person" id="scott">
+      <div class="person-head">
+        <h3>Scott Allen</h3>
+        <span class="role">Application Developer Team Lead</span>
+      </div>
+      <div class="person-body">
+
+        <div class="grouptitle"><span class="label done">Completed</span><span class="rule"></span></div>
+
+        <div class="item">
+          <h4>County Contributions app <span class="sub">(Node 24 / React / Express)</span></h4>
+          <p>Large WCAG 2.1 AA accessibility remediation (landmarks, focus management, ARIA, contrast, 320px reflow, keyboard nav) and a security-hardening pass — closed a cross-county read leak, replaced CORS wildcards with an allowlist, added OIDC nonce validation, enforced append-only audit logs, locked down dev-impersonation. Added admin year-end export reports and district-admin filters, fixed prod QA findings, isolated app tables into a dedicated Postgres schema, and prepped the repo for team handoff.</p>
+        </div>
+        <div class="item">
+          <h4>CAES Shared UI Library <span class="sub">(@caes-webteam/ui)</span></h4>
+          <p>Built and published a shared React component library — app chrome, UGA/CAES brand marks, design tokens, accessibility primitives, Storybook catalog — with automated GitHub Packages publishing. Released v0.1.0 → v0.2.1. <em>(This very page mimics that library's chrome and tokens.)</em></p>
+        </div>
+        <div class="item">
+          <h4>PDF Auto-Accessibility tool</h4>
+          <p>Added UGA SSO (MyID) login, role-based access and key management, save-time Adobe credential validation, a veraPDF second-opinion gate, OCR preflight for scanned PDFs, and reviewer-facing remediation output. Stood up a local Keycloak SSO test harness and removed dead Redis/Celery.</p>
+        </div>
+        <div class="item">
+          <h4>AI Manager / EITS export</h4>
+          <p>Rebuilt the EITS "AI Tools License Requests" workbook to match EITS's official format, corrected Copilot pricing and projected-cost formula errors (fixed a ~61% billing understatement), and added per-request pricing snapshots for accurate billing.</p>
+        </div>
+        <div class="item">
+          <h4>Departmental Parking Permit (DP) Smartsheet</h4>
+          <p>Built the intake form, tracking sheet, dashboards, and reference data (departments + ~3,200-person directory) with a weekly n8n auto-sync, for Transportation &amp; Parking's new FY27 process.</p>
+        </div>
+
+        <div class="grouptitle"><span class="label prog">In progress</span><span class="rule"></span></div>
+        <ul class="tight">
+          <li>Rolling out @caes-webteam/ui to consumer apps (County Contributions first)</li>
+          <li>County Contributions — replace blocking TRUNCATE in the lakehouse cache refresh; external testers</li>
+          <li>Extension Expert Bot — release the stale-article feedback flow after ingestion testing; external tester rollout (mid-June–early July)</li>
+          <li>HFIM Chatbot — dev pipeline + evaluation meeting prep</li>
+          <li>ColdFusion maintenance (CF mail / Bouncy Castle error, date-picker validation, CF→git), GA Counts catch-all support, Fabric gateway checks, CF→Node/React generator conversion test</li>
+        </ul>
+
+        <div class="grouptitle"><span class="label up">Upcoming</span><span class="rule"></span></div>
+        <ul class="tight">
+          <li><b>Graduate announcement system</b> <span class="muted">(Scott leading)</span> — new system to manage and publish graduate announcements</li>
+          <li><b>Personnel DB rebuild</b> <span class="muted">(Jesse leading)</span> — refactor and rebuild the Personnel Database to modernize it</li>
+          <li><b>Expand @caes-webteam/ui</b> — build out the component set (tables, form controls, and more) for universal use across CAES apps, and add a distribution path so the library can be used on static pages too, not just React apps</li>
+        </ul>
+
+        <div class="grouptitle"><span class="label support">Timely support</span><span class="rule"></span></div>
+        <div class="support-stat">
+          <span class="pill"><span class="n">10</span> completed</span>
+          <span class="pill"><span class="n">0</span> open</span>
+        </div>
+        <p class="support-note">n8n Asana-survey automation (90-day cleanup, email-flow fixes, prefill link), Farmgate admin adds, TDX gateway on the automation server, MyID affiliate sends, and OIT Tools updates.</p>
+
+      </div>
+    </article>
+
+  </div>
+</main>
+
+<!-- ══ Footer (mimics @caes-webteam/ui <Footer/>) ══ -->
+<footer class="app">
+  <div class="shell">
+    <div class="foot-grid">
+      <div>
+        <a href="https://www.caes.uga.edu/" target="_blank" rel="noopener" aria-label="UGA College of Agricultural &amp; Environmental Sciences">
+          <img class="foot-sig" src="assets/caes-horizontal-cw.svg" alt="University of Georgia College of Agricultural &amp; Environmental Sciences">
+        </a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <p>Having trouble with this app? <a href="mailto:caesweb@uga.edu">Contact the CAES Web Team</a>.</p>
+      </div>
+      <div>
+        <h4 id="foot-resources">Resources</h4>
+        <ul aria-labelledby="foot-resources">
+          <li><a href="https://policy.uga.edu/policies" target="_blank" rel="noopener">UGA Privacy Policy</a></li>
+          <li><a href="https://www.caes.uga.edu/accessibility.html" target="_blank" rel="noopener">Web Accessibility</a></li>
+          <li><a href="https://uga.teamdynamix.com/TDClient/3190/eitsclientportal/Requests/Service/56112/Report-a-Digital-Accessibility-Barrier/Request" target="_blank" rel="noopener">Report an Accessibility Barrier</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>&copy; 2026 University of Georgia, Athens, GA 30602</p>
+      <p>An Equal Opportunity Institution</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
